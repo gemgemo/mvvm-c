@@ -92,7 +92,6 @@ extension Naming {
 }\n\n\n\n\n"        >> $protocols_file_path
                     # Set MVVM blueprint 
                     echo -e "//#: MVVM-C Design pattern blueprint \n\nprotocol Controller where Self: UIViewController { } \nprotocol Model { } \nprotocol ViewModel: class { } \nprotocol Coordinator: class { }" >> "${protocols_file_path}"
-
                 fi 
             else 
                 echo -e $yellow "${protocols_file_path##*/} file created in advance."
@@ -102,6 +101,17 @@ extension Naming {
             echo -e $red "${common_dir_path##*/} not found."
             echo -e $color_off 
         fi
+
+        # Create .gitignore file 
+        git_path="${current_path}/.git"
+        gitignore_path="${current_path}/.gitignore"
+        if test -d $git_path && test ! -f $gitignore_path
+        then             
+            touch $gitignore_path
+            echo -e "\n.DS_Store\n*.lock\nPods/\nfastlane/\n" >> $gitignore_path 
+            echo -e $green "git ignore file created."
+            echo -e $color_off 
+        fi 
 
     else
         echo -e $red "Invalid Xcode Project."
