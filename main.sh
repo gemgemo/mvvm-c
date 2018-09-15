@@ -9,6 +9,11 @@ yellow='\033[0;33m'
 cyan='\033[0;36m'
 purple='\033[0;35m'
 
+create_file_header() {
+    file_name=${1##*/}
+    [ -f $1 ] && echo -e "//\n// $file_name\n// Created by $(whoami) on $(date +"%d/%m/%Y"). \n//\n// Copyright © $(date +"%Y") $(whoami). All rights reserved.\n//\n\n\nimport Foundation \nimport UIKit" >> $1 || echo -e $yellow "$file_name file not found."     
+    echo -e $color_off
+}
 
 # Validation
 # Check if project is xcode project.
@@ -63,6 +68,41 @@ then
         fi
 
         # Create Files
+        # Protocol File 
+        common_dir_path="${project_main_dir_path}/Common"
+        if [ -d $common_dir_path ]
+        then 
+            protocols_file_path="${common_dir_path}/Protocols${swift_ex}"
+            if [ ! -f $protocols_file_path ] 
+            then 
+                touch $protocols_file_path
+                create_file_header $protocols_file_path
+                echo -e $green "${protocols_file_path##*/} file created."
+                sleep 1
+                # Implement protocols file here.
+                # Set Naming protocol
+                if test -f $protocols_file_path 
+                then                     
+                    echo -e "\n\n// MARK: - Naming
+protocol Naming { }
+extension Naming {
+    func name(of className: AnyClass) -> String {
+         return String.init(describing: className)
+    }
+}\n\n\n\n\n"        >> $protocols_file_path
+                    # Set MVVM blueprint 
+                    echo -e "//#: MVVM-C Design pattern blueprint \n\nprotocol Controller where Self: UIViewController { } \nprotocol Model { } \nprotocol ViewModel: class { } \nprotocol Coordinator: class { }" >> "${protocols_file_path}"
+
+                fi 
+            else 
+                echo -e $yellow "${protocols_file_path##*/} file created in advance."
+            fi 
+            echo -e $color_off
+        else
+            echo -e $red "${common_dir_path##*/} not found."
+            echo -e $color_off 
+        fi
+
     else
         echo -e $red "Invalid Xcode Project."
     fi
