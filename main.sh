@@ -108,11 +108,24 @@ extension Naming {
         if test -d $git_path && test ! -f $gitignore_path
         then             
             touch $gitignore_path
-            echo -e "\n.DS_Store\n*.lock\nPods/\nfastlane/\n" >> $gitignore_path 
+            echo -e "\n.DS_Store\n*.lock\nPods/\nfastlane/\nGemfile\n" >> $gitignore_path 
             echo -e $green "git ignore file created."
             echo -e $color_off 
         fi 
 
+        # Pods
+        echo "Do you want to install cocoapods? y or n"
+        read set_pods
+        if [ $set_pods == "y" ]
+        then 
+            pod init
+            pod install    
+        fi 
+
+        # Fastlane
+        echo "Do you want to install fastlane? y or n"
+        read set_fastlane
+        test $set_fastlane == "y" && fastlane init
     else
         echo -e $red "Invalid Xcode Project."
     fi
